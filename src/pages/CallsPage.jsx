@@ -9,9 +9,25 @@ import Modal from '../components/Modal'
 import { useApi } from '../hooks/useApi'
 import { formatDuration, formatDate } from '../utils/formatters'
 import client from '../api/client'
-import { Phone, User, Clock, ArrowDownLeft, ArrowUpRight, Smartphone, Info } from 'lucide-react'
+import { Phone, User, Clock, ArrowDownLeft, ArrowUpRight, Smartphone, Info, Target, CheckCircle, FileText } from 'lucide-react'
 
 const PAGE_SIZE = 20
+
+const purposeColors = {
+  Sales: 'indigo',
+  Support: 'green',
+  'Follow-up': 'amber',
+  Enquiry: 'gray',
+  Other: 'gray',
+}
+
+const outcomeColors = {
+  Successful: 'green',
+  'Callback needed': 'amber',
+  'Not interested': 'red',
+  'No answer': 'gray',
+  Other: 'gray',
+}
 
 export default function CallsPage() {
   const [page, setPage] = useState(1)
@@ -50,6 +66,20 @@ export default function CallsPage() {
           {row.direction}
         </Badge>
       ),
+    },
+    {
+      key: 'call_purpose',
+      label: 'Purpose',
+      render: (row) => row.call_purpose
+        ? <Badge color={purposeColors[row.call_purpose] || 'gray'}>{row.call_purpose}</Badge>
+        : <span className="text-gray-400 text-xs">—</span>,
+    },
+    {
+      key: 'call_outcome',
+      label: 'Outcome',
+      render: (row) => row.call_outcome
+        ? <Badge color={outcomeColors[row.call_outcome] || 'gray'}>{row.call_outcome}</Badge>
+        : <span className="text-gray-400 text-xs">—</span>,
     },
     {
       key: 'duration',
@@ -185,6 +215,46 @@ function CallDetailModal({ call, onClose, onRate }) {
             label="Ended"
             value={call.call_ended_at ? formatDate(call.call_ended_at) : '—'}
           />
+        </div>
+
+        {/* Post-Call Details */}
+        <div className="border-t pt-3">
+          <p className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">Post-Call Details</p>
+          <div className="grid grid-cols-2 gap-3">
+            <DetailItem
+              icon={<Target size={16} className="text-indigo-500" />}
+              label="Purpose"
+              value={call.call_purpose
+                ? <Badge color={purposeColors[call.call_purpose] || 'gray'}>{call.call_purpose}</Badge>
+                : <span className="text-gray-400 text-sm">Not filled</span>
+              }
+            />
+            <DetailItem
+              icon={<CheckCircle size={16} className="text-green-500" />}
+              label="Outcome"
+              value={call.call_outcome
+                ? <Badge color={outcomeColors[call.call_outcome] || 'gray'}>{call.call_outcome}</Badge>
+                : <span className="text-gray-400 text-sm">Not filled</span>
+              }
+            />
+          </div>
+          {call.notes ? (
+            <div className="mt-3 flex items-start gap-2">
+              <FileText size={16} className="text-gray-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-xs text-gray-500">Notes</p>
+                <p className="text-sm text-gray-700 bg-gray-50 p-2 rounded mt-1">{call.notes}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="mt-3 flex items-start gap-2">
+              <FileText size={16} className="text-gray-300 mt-0.5" />
+              <div>
+                <p className="text-xs text-gray-500">Notes</p>
+                <p className="text-sm text-gray-400">No notes</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Device Info */}

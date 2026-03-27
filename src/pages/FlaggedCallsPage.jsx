@@ -34,6 +34,8 @@ export default function FlaggedCallsPage() {
         </Badge>
       ),
     },
+    { key: 'call_purpose', label: 'Purpose', render: (row) => row.call_purpose ? <Badge color="indigo">{row.call_purpose}</Badge> : '—' },
+    { key: 'call_outcome', label: 'Outcome', render: (row) => row.call_outcome ? <Badge color="amber">{row.call_outcome}</Badge> : '—' },
     {
       key: 'duration',
       label: 'Duration',
@@ -44,11 +46,7 @@ export default function FlaggedCallsPage() {
       label: 'Rating',
       render: (row) => <Badge color="red">{row.rating_score}/5</Badge>,
     },
-    {
-      key: 'rating_notes',
-      label: 'Notes',
-      render: (row) => row.rating_notes || '—',
-    },
+    { key: 'rating_notes', label: 'Notes', render: (row) => row.rating_notes || '—' },
     {
       key: 'flagged_at',
       label: 'Flagged At',
